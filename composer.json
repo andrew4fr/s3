@@ -4,7 +4,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "S3Bundle\\": "src/S3Bundle"
+            "": "src"
         },
         "classmap": [
             "app/AppKernel.php",
@@ -26,6 +26,7 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "sonata-project/admin-bundle": "3.*",
         "sonata-project/doctrine-orm-admin-bundle": "3",
+        "sonata-project/media-bundle": "3.5",
         "symfony/monolog-bundle": "^3.0.2",
         "symfony/swiftmailer-bundle": "~2.3,>=2.3.10",
         "symfony/symfony": "2.8.*",
