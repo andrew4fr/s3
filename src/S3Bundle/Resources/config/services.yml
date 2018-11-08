@@ -1,0 +1,10 @@
+services:
+    app.admin.bundle_view:
+        class: S3Bundle\Admin\BucketViewAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: Bucket, label: Bucket View }
+        arguments:
+            - null
+            - null
+            - S3Bundle:BucketView
+        public: true

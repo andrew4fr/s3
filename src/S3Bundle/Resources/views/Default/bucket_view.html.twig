@@ -1,0 +1,33 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block sonata_admin_content %}
+
+{% macro recFolder(name, folder) %}
+    {% import _self as self %}
+    <li>
+        <h4>{{ name }}</h4>
+
+        {% if folder|length %}
+            <ul>
+                {% for name, child in folder %}
+                    {{ self.recFolder(name, child) }}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+{% endmacro %}
+
+{% from _self import recFolder %}
+
+<h2>{{bucket}}</h2>
+{% if folders %}
+    <div id="folders">
+        <ul>
+            {% for name, folder in folders %}
+                {{ recFolder(name, folder) }}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+{% endblock %}
