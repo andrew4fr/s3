@@ -1,0 +1,11 @@
+<span><button 
+    type="button"
+    {% if level == 2 %}id="course_{{ course_id }}"{% endif %}
+    data-level="{{ level }}"
+    data-course-id="{{ course_id }}"
+    data-action="{{ action }}"
+    data-name="{{ name }}"
+    data-path="{{ path }}"
+    class="{% if level == 3 %}course_{{ course_id }} {% endif %}gallery_upload btn btn-info">
+    {{ action }}
+</button></span>

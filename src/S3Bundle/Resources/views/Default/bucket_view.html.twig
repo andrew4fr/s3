@@ -1,33 +1,87 @@
 {% extends '@SonataAdmin/standard_layout.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock %}
+
 {% block sonata_admin_content %}
-
-{% macro recFolder(name, folder) %}
-    {% import _self as self %}
-    <li>
-        <h4>{{ name }}</h4>
-
-        {% if folder|length %}
-            <ul>
-                {% for name, child in folder %}
-                    {{ self.recFolder(name, child) }}
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </li>
-{% endmacro %}
-
-{% from _self import recFolder %}
 
 <h2>{{bucket}}</h2>
 {% if folders %}
     <div id="folders">
         <ul>
-            {% for name, folder in folders %}
-                {{ recFolder(name, folder) }}
-            {% endfor %}
+        {% for l1_name, l1_folder in folders %}
+            <li>
+                <h2>{{ l1_name }}</h2>
+                <ul>
+                {% for l2_name, l2_folder in l1_folder.children %}
+                    <li>
+                        <h3>{{ l2_name }}&nbsp;{{ include("S3Bundle:Default:upload_button.html.twig", {"level": 2, "course_id": l2_folder.course_id, "action": l2_folder.action, "path": l2_folder.path, "name": "" }) }}</h3>
+                        <ul>
+                        {% for l3 in l2_folder.children %}
+                            <li>
+                                <h4>{{ l3.name }}&nbsp;{{ include("S3Bundle:Default:upload_button.html.twig", {"level": 3, "course_id": l2_folder.course_id, "action": l3.action, "name": l3.name, "path": l3.path }) }}</h4>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
         </ul>
     </div>
 {% endif %}
+
+<script>
+jQuery(document).ready(function() {
+    $("#folders").on("click", ".gallery_upload", function() {
+        var span = $(this).parent();
+        var restore = span.html();
+        $(".s3_error").remove();
+
+        // block all buttons
+        $(".gallery_upload").each(function() {
+            $(this).attr("disabled", "disabled");
+        });
+
+        $(this).html('<i class="fa fa-spinner fa-spin" style="font-size:20px"></i>');
+        var data = $(this).data();
+        var id = $(this).data("courseId");
+        var level = $(this).data("level");
+        $.ajax({
+            url: "/backend/galleryUpload",
+            type: "POST",
+            data: data,
+            success: function(result) {
+                span.html(result);
+                // change children action 
+                if (level == 2) {
+                    $(".course_" + id).each(function() {
+                        $(this).html("replace");
+                        $(this).attr("data-action", "replace");
+                    });
+                }
+                // change parent action 
+                if (level == 3) {
+                    $("#course_" + id).html("replace");
+                    $("#course_" + id).attr("data-action", "replace");
+                }
+                $(".gallery_upload").each(function() {
+                    $(this).removeAttr("disabled");
+                });
+            },
+            error: function(error) {
+                span.parent().prepend("<div class=\"s3_error alert alert-danger\">" + error.responseText + "</div>");
+                $(".gallery_upload").each(function() {
+                    $(this).removeAttr("disabled");
+                });
+                span.html(restore);
+            }
+        });
+    });
+});
+</script>
 
 {% endblock %}

@@ -1,3 +1,8 @@
+s3_backend:
+    resource: "@S3Bundle/Controller/Backend"
+    type:     annotation
+    prefix:   /backend
+
 admin_area:
     resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.xml'
     prefix: /
