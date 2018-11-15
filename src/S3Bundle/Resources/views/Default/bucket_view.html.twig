@@ -17,7 +17,7 @@
                 <ul>
                 {% for l2_name, l2_folder in l1_folder.children %}
                     <li>
-                        <h3>{{ l2_name }}&nbsp;{{ include("S3Bundle:Default:upload_button.html.twig", {"level": 2, "course_id": l2_folder.course_id, "action": l2_folder.action, "path": l2_folder.path, "name": "" }) }}</h3>
+                        <h3>{{ l2_name }}&nbsp;{{ include("S3Bundle:Default:upload_button.html.twig", {"level": 2, "course_id": l2_folder.course_id, "action": l2_folder.action, "path": l2_folder.path, "name": l2_name }) }}</h3>
                         <ul>
                         {% for l3 in l2_folder.children %}
                             <li>

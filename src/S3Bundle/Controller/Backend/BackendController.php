@@ -25,6 +25,8 @@ class BackendController extends Controller
         try {
             if ($params['level'] == 3) {
                 $this->uploadGallery($params['name'], $params['path'], (int)$params['courseId']);
+            } else {
+                $this->uploadGalleries((int)$params['courseId']);
             }
         } catch(Exception $e) {
             return new Response($e->getMessage(), 500);
@@ -86,5 +88,26 @@ class BackendController extends Controller
 
         $gallery->setGalleryHasMedias($hasMedias);
         $galleryManager->save($gallery);
+    }
+
+    private function uploadGalleries(int $courseId)
+    {
+        $s3 = $this->container->get('app.amazon.s3');
+
+        $bucketName = $this->container->getParameter('amazon_s3_bucket');
+        $bucket = $s3->getBucket($bucketName);
+        foreach ($bucket->objects() as $object) {
+            $key = $object->getIdentity()['Key'];
+            $dirs = explode('/', $key);
+            $theLastPath = array_pop($dirs);
+            if ($theLastPath == '' && count($dirs) == 3) {
+                if (preg_match('@^(\d+)@', $dirs[1], $matches)) {
+                    $id = (int)$matches[1];
+                    if ($id == $courseId) {
+                        $this->uploadGallery($dirs[2], sprintf('%s/%s', $dirs[0], $dirs[1]), $courseId);
+                    }
+                }
+            }
+        }
     }
 }
